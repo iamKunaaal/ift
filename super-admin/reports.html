@@ -371,15 +371,14 @@
                 <div class="page-header">
                     <div>
                         <h1>Reports & Analytics</h1>
-                        <p class="page-header-subtitle">Comprehensive insights for IFT submissions and evaluations</p>
+                        <p class="page-header-subtitle">Comprehensive insights for IFT</p>
                     </div>
                     <div class="header-actions">
-                        <button class="btn-filter active">Real-time</button>
-                        <button class="btn-filter">Historical</button>
-                        <div class="btn-filter">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">calendar_today</span>
-                            Last 30 Days
-                        </div>
+                        <button class="btn-filter active">Board-wise</button>
+                        <button class="btn-filter">Grade-wise</button>
+                        <button class="btn-filter">City-wise</button>
+                        <button class="btn-filter">Top 10 cities</button>
+                        <button class="btn-filter">Domain-wise performance</button>
                     </div>
                 </div>
 
@@ -858,6 +857,123 @@
                 });
             });
         });
+    </script>
+
+    <!-- Filter Button Handler -->
+    <script>
+        // Data for different filter views
+        const filterData = {
+            'Board-wise': {
+                regions: [
+                    { label: 'CBSE', value: '2,245', width: '85%', color: 'var(--primary)' },
+                    { label: 'ICSE', value: '1,582', width: '70%', color: '#0EA5E9' },
+                    { label: 'State Board', value: '1,856', width: '75%', color: '#0D9488' },
+                    { label: 'IB/IGCSE', value: '598', width: '45%', color: '#94a3b8' }
+                ],
+                statusBadge: '340 Teams Active'
+            },
+            'Grade-wise': {
+                regions: [
+                    { label: 'Grade 9-10', value: '1,845', width: '90%', color: 'var(--primary)' },
+                    { label: 'Grade 11-12', value: '2,156', width: '95%', color: '#0EA5E9' },
+                    { label: 'Grade 6-8', value: '982', width: '60%', color: '#0D9488' },
+                    { label: 'Others', value: '298', width: '30%', color: '#94a3b8' }
+                ],
+                statusBadge: '450 Teams Active'
+            },
+            'City-wise': {
+                regions: [
+                    { label: 'Delhi NCR', value: '1,245', width: '85%', color: 'var(--primary)' },
+                    { label: 'Mumbai', value: '982', width: '70%', color: '#0EA5E9' },
+                    { label: 'Bangalore', value: '1,456', width: '95%', color: '#0D9488' },
+                    { label: 'Others', value: '598', width: '45%', color: '#94a3b8' }
+                ],
+                statusBadge: '340 Teams Active'
+            },
+            'Top 10 cities': {
+                regions: [
+                    { label: 'Bangalore', value: '1,456', width: '95%', color: 'var(--primary)' },
+                    { label: 'Delhi', value: '1,245', width: '85%', color: '#0EA5E9' },
+                    { label: 'Mumbai', value: '982', width: '70%', color: '#0D9488' },
+                    { label: 'Pune', value: '756', width: '55%', color: '#f59e0b' }
+                ],
+                statusBadge: '285 Teams Active'
+            },
+            'Domain-wise performance': {
+                regions: [
+                    { label: 'Education', value: '2,145', width: '90%', color: 'var(--primary)' },
+                    { label: 'Agriculture', value: '1,682', width: '75%', color: '#0EA5E9' },
+                    { label: 'Healthcare', value: '1,256', width: '65%', color: '#0D9488' },
+                    { label: 'Technology', value: '898', width: '50%', color: '#94a3b8' }
+                ],
+                statusBadge: '420 Teams Active'
+            }
+        };
+
+        // Handle filter button clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.btn-filter');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    // Get filter type
+                    const filterType = this.textContent.trim();
+
+                    // Update data
+                    updateRegionData(filterType);
+                });
+            });
+        });
+
+        function updateRegionData(filterType) {
+            const data = filterData[filterType];
+
+            if (!data) return;
+
+            // Update status badge
+            const statusBadge = document.querySelector('.status-badge');
+            if (statusBadge) {
+                const pulseDot = statusBadge.querySelector('.pulse-dot');
+                statusBadge.innerHTML = '';
+                if (pulseDot) {
+                    statusBadge.appendChild(pulseDot.cloneNode(true));
+                } else {
+                    const newDot = document.createElement('span');
+                    newDot.className = 'pulse-dot';
+                    statusBadge.appendChild(newDot);
+                }
+                statusBadge.appendChild(document.createTextNode(data.statusBadge));
+            }
+
+            // Update region stats
+            const regionStats = document.querySelectorAll('.region-stat');
+            regionStats.forEach((stat, index) => {
+                if (data.regions[index]) {
+                    const region = data.regions[index];
+
+                    // Update label
+                    const label = stat.querySelector('.region-label');
+                    if (label) label.textContent = region.label;
+
+                    // Update value
+                    const value = stat.querySelector('.region-value');
+                    if (value) value.textContent = region.value;
+
+                    // Update progress bar
+                    const progressFill = stat.querySelector('.progress-fill');
+                    if (progressFill) {
+                        progressFill.style.width = region.width;
+                        progressFill.style.background = region.color;
+                    }
+                }
+            });
+        }
     </script>
 </body>
 
